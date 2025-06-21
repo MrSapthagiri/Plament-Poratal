@@ -51,7 +51,7 @@ app.use('/api/companies', companyRoutes);
 app.use('/api/jobs', jobRoutes);
 app.use('/api/dashboard', dashboardRoutes);
 
-// Error handling middleware
+// Error handling middleware  http://localhost:5000/api/users/update-profile
 app.use((err, req, res, next) => {
   console.error(err.stack);
   res.status(500).json({ message: 'Something went wrong!' });

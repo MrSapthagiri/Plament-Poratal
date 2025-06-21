@@ -23,8 +23,8 @@ const studentSchema = new mongoose.Schema(
     skills: [{
       type: String,
     }],
-    department:{
-      type:String,
+    department: {
+      type: String,
     },
     cgpa: {
       type: Number,
@@ -58,6 +58,25 @@ const studentSchema = new mongoose.Schema(
       enum: ['not_placed', 'placed', 'offer_received'],
       default: 'not_placed',
     },
+    about: {
+      type: String,
+      default: '',
+    },
+    degree: {
+      type: String,
+      required: true,
+      example: "Bachelor of Science"
+    },
+    department: {
+      type: String,
+      required: true,
+      example: "Computer Science"
+    },
+    passedOut: {
+      type: Number,
+      required: true,
+      example: 2023
+    }
   },
   {
     timestamps: true,
@@ -67,3 +86,11 @@ const studentSchema = new mongoose.Schema(
 const Student = mongoose.model('Student', studentSchema);
 
 export default Student;
+
+// /*
+
+// about us
+// educcation
+
+
+//  /*
