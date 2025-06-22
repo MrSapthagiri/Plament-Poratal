@@ -13,6 +13,9 @@ import PrivateRoute from "./components/PrivateRoute";
 import NotFound from "./pages/NotFound";
 import ChatPage from "./components/ChatPage";
 
+import ApplicationsPage from "./pages/applicationpage/ApplicationsPage";
+import ApplicationsPageCompany from "./pages/applicationpage/ApplicationsPagecompany";
+
 function App() {
   return (
     <Router>
@@ -31,6 +34,8 @@ function App() {
               <Route path="/companies" element={<Companies />} />
               <Route path="/jobs" element={<Jobs />} />
               <Route path="/profile" element={<Profile />} />
+              <Route path="/applications" element={<ApplicationsPage />} />
+              <Route path="/company-applications" element={<ApplicationsPageCompany />} />
               <Route path="/chat" element={<ChatPage />} />
             </Route>
           </Route>

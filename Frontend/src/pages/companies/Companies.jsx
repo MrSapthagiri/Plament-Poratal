@@ -9,6 +9,8 @@ import CompanyDetailsModal from './components/CompanyDetailsModal';
 
 const Companies = () => {
   const [companies, setCompanies] = useState([]);
+  let user = JSON.parse(localStorage.getItem('user')) || {};
+
   const [filters, setFilters] = useState({
     industry: '',
     verificationStatus: '',
@@ -100,13 +102,18 @@ const Companies = () => {
     <div className="container mx-auto px-4 py-8">
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-2xl font-bold text-gray-900">Companies</h1>
-        <button
-          onClick={() => setShowAddModal(true)}
-          className="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-primary hover:bg-primary-dark focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary"
-        >
-          <PlusIcon className="h-5 w-5 mr-2" />
-          Add Company
-        </button>
+
+        {(user.role === 'admin' || user.role === 'super_admin' || user.role === 'placement_staff' || user.role === 'company') && (
+          <button
+            onClick={() => setShowAddModal(true)}
+            className="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-primary hover:bg-primary-dark focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary"
+          >
+            <PlusIcon className="h-5 w-5 mr-2" />
+            Add Company
+          </button>
+        )}
+
+
       </div>
 
       <CompanyFilters filters={filters} setFilters={setFilters} />

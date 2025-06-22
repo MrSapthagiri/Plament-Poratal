@@ -99,13 +99,13 @@ const Students = () => {
             Export
           </button>
 
-          <button
+          {/* <button
             onClick={() => setShowAddModal(true)}
             className="flex items-center px-4 py-2 text-sm text-white bg-primary rounded-md hover:bg-primary-dark"
           >
             <UserPlusIcon className="w-4 h-4 mr-2" />
             Add Student
-          </button>
+          </button> */}
         </div>
       </div>
 

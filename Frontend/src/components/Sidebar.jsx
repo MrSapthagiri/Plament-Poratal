@@ -143,15 +143,31 @@ import {
   ChatBubbleLeftRightIcon,
 } from '@heroicons/react/24/outline';
 import logo from "../assets/logo.jpg";
+import { use } from 'react';
 
-const navigation = [
+const navigationbase = [
   { name: 'Dashboard', href: '/', icon: HomeIcon },
   { name: 'Students', href: '/students', icon: UserGroupIcon },
-  { name: 'Companies', href: '/companies', icon: BuildingOfficeIcon },
+  { name: 'Applications', href: '/company-applications', icon: BriefcaseIcon }, // Changed to a proper route
+  { name: 'Companies', href: '/companies', icon: BuildingOfficeIcon },///company-applications
   { name: 'Jobs', href: '/jobs', icon: BriefcaseIcon },
   { name: 'Profile', href: '/profile', icon: UserIcon },
   { name: 'Chat', href: '/chat', icon: ChatBubbleLeftRightIcon },
 ];
+
+const studentnavigation = [
+  { name: 'Dashboard', href: '/', icon: HomeIcon },
+  { name: 'Companies', href: '/companies', icon: BuildingOfficeIcon },
+  { name: 'Jobs', href: '/jobs', icon: BriefcaseIcon },
+   { name: 'applications', href: '/applications', icon: BriefcaseIcon },
+  { name: 'Profile', href: '/profile', icon: UserIcon },
+  { name: 'Chat', href: '/chat', icon: ChatBubbleLeftRightIcon },
+];
+
+const user = JSON.parse(localStorage.getItem('user')) || {};
+console.log(user.role);
+
+let navigation=user.role==="student"?studentnavigation  : navigationbase;
 
 const Sidebar = () => {
   const user = JSON.parse(localStorage.getItem('user')) || {};

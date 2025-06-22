@@ -174,7 +174,8 @@ import { useAuth } from '../../context/AuthContext';
 import { toast } from 'react-hot-toast';
 
 const Jobs = () => {
-  const { user } = useAuth();
+  // const { user } = useAuth();
+  const user = JSON.parse(localStorage.getItem('user')); 
   const [jobs, setJobs] = useState([]);
   const [filters, setFilters] = useState({
     searchQuery: '',
@@ -194,7 +195,9 @@ const Jobs = () => {
 
   const fetchJobs = async () => {
     try {
-      const response = await axios.get('/api/jobs');
+      const response = await axios.get('http://localhost:5000/api/jobs/');
+      console.log(response.data);
+      
       setJobs(response.data || []); // fallback in case response.data is undefined
     } catch (error) {
       toast.error('Error fetching jobs');
@@ -204,7 +207,7 @@ const Jobs = () => {
 
   const handleAddJob = async (jobData) => {
     try {
-      await axios.post('/api/jobs', jobData);
+      await axios.post('http://localhost:5000/api/jobs/'+user?._id, jobData);
       toast.success('Job posted successfully');
       fetchJobs();
       setShowAddModal(false);
@@ -215,7 +218,7 @@ const Jobs = () => {
 
   const handleEditJob = async (jobData) => {
     try {
-      await axios.patch(`/api/jobs/${selectedJob._id}`, jobData);
+      await axios.patch(`http://localhost:5000/api/jobs/${selectedJob._id}`, jobData);
       toast.success('Job updated successfully');
       fetchJobs();
       setShowEditModal(false);
@@ -230,7 +233,7 @@ const Jobs = () => {
     if (!window.confirm('Are you sure you want to delete this job?')) return;
 
     try {
-      await axios.delete(`/api/jobs/${jobId}`);
+      await axios.delete(`http://localhost:5000/api/jobs/${jobId}`);
       toast.success('Job deleted successfully');
       fetchJobs();
     } catch (error) {
@@ -239,28 +242,28 @@ const Jobs = () => {
     }
   };
 
-  // const filteredJobs = jobs.filter((job) => {
-  //   const matchesSearch =
-  //     job.title?.toLowerCase().includes(filters.searchQuery.toLowerCase()) ||
-  //     job.company?.name?.toLowerCase().includes(filters.searchQuery.toLowerCase()) ||
-  //     job.description?.toLowerCase().includes(filters.searchQuery.toLowerCase());
+  const filteredJobs = jobs.filter((job) => {
+    const matchesSearch =
+      job.title?.toLowerCase().includes(filters.searchQuery.toLowerCase()) ||
+      job.company?.name?.toLowerCase().includes(filters.searchQuery.toLowerCase()) ||
+      job.description?.toLowerCase().includes(filters.searchQuery.toLowerCase());
 
-  //   const matchesType = !filters.type || job.type === filters.type;
-  //   const matchesLocation =
-  //     !filters.location || job.location?.toLowerCase().includes(filters.location.toLowerCase());
-  //   const matchesExperience =
-  //     !filters.experience || (job.experience?.min >= parseInt(filters.experience));
-  //   const matchesSalary =
-  //     !filters.salary || (job.salary?.min >= parseInt(filters.salary));
+    const matchesType = !filters.type || job.type === filters.type;
+    const matchesLocation =
+      !filters.location || job.location?.toLowerCase().includes(filters.location.toLowerCase());
+    const matchesExperience =
+      !filters.experience || (job.experience?.min >= parseInt(filters.experience));
+    const matchesSalary =
+      !filters.salary || (job.salary?.min >= parseInt(filters.salary));
 
-  //   return (
-  //     matchesSearch &&
-  //     matchesType &&
-  //     matchesLocation &&
-  //     matchesExperience &&
-  //     matchesSalary
-  //   );
-  // });
+    return (
+      matchesSearch &&
+      matchesType &&
+      matchesLocation &&
+      matchesExperience &&
+      matchesSalary
+    );
+  });
 
   return (
     <div className="container mx-auto px-4 py-8">
@@ -280,7 +283,7 @@ const Jobs = () => {
       <JobFilters filters={filters} setFilters={setFilters} />
 
       <JobList
-        // jobs={filteredJobs} // ✅ this was missing before
+        jobs={filteredJobs} // ✅ this was missing before
         onEdit={(job) => {
           setSelectedJob(job);
           setShowEditModal(true);
