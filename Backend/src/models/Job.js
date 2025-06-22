@@ -63,7 +63,7 @@ const jobSchema = new mongoose.Schema(
     },
     minCGPA: {
       type: Number,
-      required: true,
+      // required: true,
       min: 0,
       max: 10,
     },

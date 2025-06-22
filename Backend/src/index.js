@@ -4,7 +4,11 @@ import dotenv from 'dotenv';
 import mongoose from 'mongoose';
 import { createServer } from 'http';
 import { Server } from 'socket.io';
-
+import path  from'path';
+import { fileURLToPath } from 'url';   
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+const rootDir = path.resolve(__dirname, '..');
 // Import routes
 import authRoutes from './routes/auth.js';
 import userRoutes from './routes/users.js';
@@ -27,6 +31,7 @@ const io = new Server(httpServer, {
 // Middleware
 app.use(cors());
 app.use(express.json());
+app.use('/uploads', express.static(path.join(rootDir, 'uploads')));
 
 // Database connection
 mongoose
@@ -48,10 +53,12 @@ app.use('/api/auth', authRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/students', studentRoutes);
 app.use('/api/companies', companyRoutes);
-app.use('/api/jobs', jobRoutes);
-app.use('/api/dashboard', dashboardRoutes);
+app.use('/api/jobs', jobRoutes);///api/students/applications/:jobId/:id
+app.use('/api/dashboard', dashboardRoutes);  
 
-// Error handling middleware  http://localhost:5000/api/users/update-profile
+
+
+// Error handling middleware  http://localhost:5000/api/students/applications/status
 app.use((err, req, res, next) => {
   console.error(err.stack);
   res.status(500).json({ message: 'Something went wrong!' });

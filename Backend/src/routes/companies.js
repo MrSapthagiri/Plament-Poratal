@@ -7,16 +7,21 @@ import {
   updateCompany,
   deleteCompany,
   getCompanyProfile,
-  updateCompanyProfile,
+  
   verifyCompany,
   rejectCompany,
   getCompanyStats,
 } from '../controllers/companyController.js';
+import { getCompanyProfilebyuser, updateCompanyProfile } from '../controllers/userController.js';
+import companyupload from '../middleware/companyuplods.js';
 
 const router = express.Router();
 
 // Protect all routes after this middleware
-router.use(protect);
+// router.use(protect);
+
+router.put('/:id', companyupload.single('logo'), updateCompanyProfile);
+router.get("/getcompany/:id",getCompanyProfilebyuser)
 
 // Routes accessible by placement staff and admins
 router.use(restrictTo('super_admin', 'admin', 'placement_staff', 'company'));

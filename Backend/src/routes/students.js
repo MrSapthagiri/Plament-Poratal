@@ -1,11 +1,11 @@
 import express from 'express';
 import { protect, restrictTo } from '../middleware/auth.js';
-import { addCertification, applyForJob, createStudent, deleteCertification, deleteStudent, getAllStudents, getApplicationDetails, getMyApplications, getMyProfile, getStudent, getStudentStats, updateMyProfile, updateStudent, uploadResume } from '../controllers/studentController.js';
+import { addCertification, applyForJob, createStudent, deleteCertification, deleteStudent, getAllApplications, getAllStudents, getApplicationDetails, getMyApplications, getMyProfile, getStudent, getStudentStats, updateApplicationStatus, updateMyProfile, updateStudent, uploadResume } from '../controllers/studentController.js';
 
 const router = express.Router();
 
 // Protect all routes after this middleware
-router.use(protect);
+// router.use(protect);
 
 // Routes accessible by placement staff and admins
 router.use(restrictTo('super_admin', 'admin', 'placement_staff'));
@@ -26,8 +26,13 @@ router.post('/profile/certifications', restrictTo('student'), addCertification);
 router.delete('/profile/certifications/:id', restrictTo('student'), deleteCertification);
 
 // Student applications
-router.get('/applications', restrictTo('student'), getMyApplications);
-router.post('/applications/:jobId', restrictTo('student'), applyForJob);
+router.put('/applications/status/:id', updateApplicationStatus);
+router.get('/applications/:id', restrictTo('student'), getMyApplications);
+router.get('/all/applications/', restrictTo('student'), getAllApplications);
+router.post('/applications/:jobId/:id', restrictTo('student'), applyForJob);
 router.get('/applications/:applicationId', protect, getApplicationDetails);
+
+// updateApplicationStatus
+
 
 export default router;

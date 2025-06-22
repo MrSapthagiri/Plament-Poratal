@@ -10,7 +10,8 @@ import {
   updateStudentProfile,
 } from '../controllers/userController.js';
 import { protect, restrictTo } from '../middleware/auth.js';
-import upload from '../middleware/upload.js';
+
+import uploadstudents from '../middleware/uploadsstudent.js';
 
 const router = express.Router();
 
@@ -24,7 +25,7 @@ router.patch('/change-password', changePassword);
 router.put(
   '/update-profile/:id',
   // protect, // uncomment if you have auth
-  upload.fields([
+  uploadstudents.fields([
     { name: 'profileImage', maxCount: 1 },
     { name: 'resume', maxCount: 1 },
   ]),

@@ -18,14 +18,14 @@ import {
 const router = express.Router();
 
 // Protect all routes after this middleware
-router.use(protect);
+// router.use(protect);
+router.post('/:id', restrictTo('company'), createJob);
 
 // Public routes (accessible by all authenticated users)
 router.get('/', getAllJobs);
 router.get('/:id', getJob);
 
 // Company routes
-router.post('/', restrictTo('company'), createJob);
 router.patch('/:id', restrictTo('company'), updateJob);
 router.delete('/:id', restrictTo('company'), deleteJob);
 router.get('/company/dashboard', restrictTo('company'), getCompanyJobs);

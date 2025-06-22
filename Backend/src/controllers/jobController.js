@@ -1,10 +1,11 @@
 import Job from '../models/Job.js';
 import Company from '../models/Company.js';
 import Application from '../models/Application.js';
+import User from '../models/User.js';
 
 export const getAllJobs = async (req, res) => {
   try {
-    const jobs = await Job.find({ status: 'open' })
+    const jobs = await Job.find()
       .populate('company', 'name location logo')
       .select('-applications');
     
@@ -40,7 +41,7 @@ export const getJob = async (req, res) => {
 
 export const createJob = async (req, res) => {
   try {
-    const company = await Company.findOne({ user: req.user.id });
+    const company = await User.findById(req.params.id)
     
     if (!company) {
       return res.status(404).json({
@@ -58,6 +59,8 @@ export const createJob = async (req, res) => {
     
     res.status(201).json(job);
   } catch (error) {
+    console.log(error);
+    
     res.status(400).json({
       message: 'Error creating job',
       error: error.message,

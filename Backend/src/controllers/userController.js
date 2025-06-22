@@ -1,5 +1,8 @@
 import User from '../models/User.js';
 import bcrypt from 'bcryptjs';
+import { login } from './authController.js';
+import fs from 'fs';
+import path from 'path';
 
 export const getAllUsers = async (req, res) => {
   try {
@@ -227,6 +230,18 @@ export const updateStudentProfile = async (req, res) => {
         console.error('Invalid education format');
       }
     }
+    console.log('user.skills', req.body.skills);
+
+    if (req.body.skills) {
+      try {
+        let skills = req.body.skills.split(',');
+        if (Array.isArray(skills)) {
+          user.skills = skills;
+        }
+      } catch (err) {
+        console.error('Invalid skills format');
+      }
+    }
 
 
     // File uploads
@@ -252,3 +267,105 @@ export const updateStudentProfile = async (req, res) => {
     res.status(500).json({ message: 'Server Error', error: err.message });
   }
 };
+
+export const updateCompanyProfile = async (req, res) => {
+  console.log('Update company profile request:', req.body, req.file);
+
+  try {
+    const companyId = req.params.id;
+
+    const updateData = {
+      about: req.body.about,
+      address: {
+        street: req.body.street,
+        city: req.body.city,
+        state: req.body.state,
+        country: req.body.country,
+        pincode: req.body.pincode,
+      },
+      website: req.body.website,
+      companySize: req.body.companySize,
+      companyType: req.body.companyType,
+      hrContact: {
+        name: req.body.hrName,
+        email: req.body.hrEmail,
+        phone: req.body.hrPhone,
+      },
+    };
+
+    if (req.file) {
+      updateData.logo = `uploads/logos/${req.file.filename}`;
+
+      const existingCompany = await User.findById(companyId);
+
+      if (existingCompany?.logo) {
+        const oldLogoPath = path.join(process.cwd(), existingCompany.logo);
+
+        // Check if file exists before deleting
+        fs.access(oldLogoPath, fs.constants.F_OK, (err) => {
+          if (!err) {
+            fs.unlink(oldLogoPath, (unlinkErr) => {
+              if (unlinkErr) console.error('Failed to delete old logo:', unlinkErr);
+            });
+          } else {
+            console.warn('Old logo file not found:', oldLogoPath);
+          }
+        });
+      }
+    }
+
+    const updatedCompany = await User.findByIdAndUpdate(companyId, updateData, {
+      new: true,
+    });
+
+    if (!updatedCompany) {
+      return res.status(404).json({ message: 'Company not found' });
+    }
+
+    res.status(200).json({ message: 'Company profile updated', data: updatedCompany });
+  } catch (error) {
+    console.error('Update company error:', error);
+    res.status(500).json({ message: 'Server error', error: error.message });
+  }
+};
+
+
+
+
+export const getCompanyProfilebyuser = async (req, res) => {
+  try {
+    const companyId = req.params.id;
+
+    const company = await User.findById(companyId);
+
+    if (!company) {
+      return res.status(404).json({ message: 'Company not found' });
+    }
+
+    // Only return the structure you need
+    const companyData = {
+      about: company.about,
+      address: {
+        street: company.address?.street || '',
+        city: company.address?.city || '',
+        state: company.address?.state || '',
+        country: company.address?.country || '',
+        pincode: company.address?.pincode || '',
+      },
+      website: company.website || '',
+      companySize: company.companySize || '',
+      companyType: company.companyType || '',
+      hrContact: {
+        name: company.hrContact?.name || '',
+        email: company.hrContact?.email || '',
+        phone: company.hrContact?.phone || '',
+      },
+    };
+
+    res.status(200).json(companyData);
+  } catch (error) {
+    console.error('Get company error:', error);
+    res.status(500).json({ message: 'Server error', error: error.message });
+  }
+};
+

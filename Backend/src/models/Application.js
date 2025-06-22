@@ -12,6 +12,10 @@ const applicationSchema = new mongoose.Schema(
       ref: 'Job',
       required: true,
     },
+    jobdetails: {
+     type:Object
+      
+    },
     status: {
       type: String,
       enum: ['pending', 'shortlisted', 'rejected', 'interview_scheduled', 'selected', 'offer_sent', 'offer_accepted', 'offer_declined'],

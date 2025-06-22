@@ -2,14 +2,13 @@ import Student from '../models/Student.js';
 import Application from '../models/Application.js';
 import Job from '../models/Job.js';
 import { uploadToS3, deleteFromS3 } from '../utils/s3.js';
+import User from '../models/User.js';
 
 export const getAllStudents = async (req, res) => {
   try {
-    const students = await Student.find()
-      .populate('user', 'name email')
-      .populate('applications');
-    
-    res.status(200).json(students);
+    const students = await User.find()
+    const filterdata=students.filter((student) => student.role === 'student');
+    res.status(200).json(filterdata);
   } catch (error) {
     res.status(500).json({
       message: 'Error fetching students',
@@ -270,8 +269,9 @@ export const deleteCertification = async (req, res) => {
 };
 
 export const applyForJob = async (req, res) => {
+
   try {
-    const student = await Student.findOne({ user: req.user.id });
+    const student = await User.findById( req.params.id );
     if (!student) {
       return res.status(404).json({
         message: 'Student profile not found',
@@ -302,10 +302,14 @@ export const applyForJob = async (req, res) => {
       job: job._id,
       company: job.company,
       coverLetter: req.body.coverLetter,
+      resume: student.resume, // Assuming student has a resume uploaded
+      jobdetails:job
     });
 
     res.status(201).json(application);
   } catch (error) {
+    console.log(error);
+    
     res.status(500).json({
       message: 'Error applying for job',
       error: error.message,
@@ -315,7 +319,7 @@ export const applyForJob = async (req, res) => {
 
 export const getMyApplications = async (req, res) => {
   try {
-    const student = await Student.findOne({ user: req.user.id });
+    const student = await User.findById( req.params.id );
     if (!student) {
       return res.status(404).json({
         message: 'Student profile not found',
@@ -323,9 +327,21 @@ export const getMyApplications = async (req, res) => {
     }
 
     const applications = await Application.find({ student: student._id })
-      .populate('job')
-      .populate('company');
+     
+    res.status(200).json(applications);
+  } catch (error) {
+    res.status(500).json({
+      message: 'Error fetching applications',
+      error: error.message,
+    });
+  }
+};
 
+export const getAllApplications = async (req, res) => {
+  try {
+   
+    const applications = await Application.find()
+     
     res.status(200).json(applications);
   } catch (error) {
     res.status(500).json({
@@ -387,6 +403,40 @@ export const getApplicationDetails = async (req, res) => {
   } catch (error) {
     res.status(500).json({
       message: 'Error fetching application details',
+      error: error.message,
+    });
+  }
+};
+
+
+export const updateApplicationStatus = async (req, res) => {
+  try {
+    const { status } = req.body;
+    const { id } = req.params;
+
+    // Validate status
+    const validStatuses = ['pending', 'shortlisted', 'rejected', 'interview_scheduled', 'selected', 'offer_sent', 'offer_accepted', 'offer_declined'];
+    if (!validStatuses.includes(status)) {
+      return res.status(400).json({ message: 'Invalid status value' });
+    }
+
+    // Find and update application
+    const application = await Application.findById(id);
+    if (!application) {
+      return res.status(404).json({ message: 'Application not found' });
+    }
+
+    application.status = status;
+    await application.save();
+
+    res.status(200).json({
+      message: 'Application status updated successfully',
+      application,
+    });
+  } catch (error) {
+    console.log('Error updating status:', error);
+    res.status(500).json({
+      message: 'Internal server error',
       error: error.message,
     });
   }

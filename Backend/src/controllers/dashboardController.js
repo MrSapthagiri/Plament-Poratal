@@ -2,15 +2,18 @@ import Student from '../models/Student.js';
 import Company from '../models/Company.js';
 import Job from '../models/Job.js';
 import Application from '../models/Application.js';
+import User from '../models/User.js';
 
 export const getDashboardStats = async (req, res) => {
   try {
+    const student = await User.find()
+    const company = await User.find()
     const stats = {
-      students: await Student.countDocuments(),
-      companies: await Company.countDocuments({ verificationStatus: 'verified' }),
+      students: await student.filter(user => user.role === 'student').length,
+      companies: await company.filter(user => user.role === 'company').length,
       activeJobs: await Job.countDocuments({ status: 'open' }),
       totalApplications: await Application.countDocuments(),
-      placedStudents: await Student.countDocuments({ placementStatus: 'placed' }),
+      placedStudents: await student.filter(user => user.placementStatus === 'placed').length
     };
     
     res.status(200).json(stats);

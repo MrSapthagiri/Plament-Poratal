@@ -42,6 +42,9 @@ const userSchema = new mongoose.Schema(
       type: String,
       default: '',
     },
+    skills: [{
+      type: String,
+    }],
     certifications: [{
       name: String,
       issuer: String,
@@ -70,7 +73,40 @@ const userSchema = new mongoose.Schema(
       enum: ['not_placed', 'placed', 'offer_received'],
       default: 'not_placed',
     },
+    // company 
+    about: {
+      type: String,
+    },
+    address: {
+    street: { type: String },
+    city: { type: String },
+    state: { type: String },
+    country: { type: String },
+    pincode: { type: String },
   },
+    website: {
+      type: String,
+    },
+    logo: {
+      type: String, // Store image path or URL
+    },
+    companySize: {
+      type: String, // Example: "1-10", "11-50", "51-200"
+    },
+    companyType: {
+      type: String, // Example: "Private", "Public", "Startup", etc.
+    },
+    hrContact: {
+      name: { type: String },
+      email: { type: String },
+      phone: { type: String },
+    },
+    jobs:[{
+      type: String,
+      ref: 'Job',
+    }],
+  },
+  
   {
     timestamps: true,
     toJSON: { virtuals: true },
